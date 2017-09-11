@@ -85,6 +85,8 @@ void Slvs_Solve(Slvs_System *ssys, Slvs_hGroup shg)
         IsInit = 1;
     }
 
+    ssys->result = SLVS_RESULT_INIT_ERROR;
+
     int i;
     for(i = 0; i < ssys->params; i++) {
         Slvs_Param *sp = &(ssys->param[i]);
@@ -113,6 +115,37 @@ case SLVS_E_LINE_SEGMENT:       e.type = Entity::LINE_SEGMENT; break;
 case SLVS_E_CUBIC:              e.type = Entity::CUBIC; break;
 case SLVS_E_CIRCLE:             e.type = Entity::CIRCLE; break;
 case SLVS_E_ARC_OF_CIRCLE:      e.type = Entity::ARC_OF_CIRCLE; break;
+case SLVS_E_TRANSFORM: {
+                hEntity eh;
+                eh.v = se->src;
+                EntityBase *es = SK.entity.FindByIdNoOops(eh);
+                if(!es) {
+                    dbp("transforming entity source not found, %d->%d", 
+                            se->h,se->src); 
+                    return;
+                }
+                hParam param[7];
+                param[0].v = se->param[0];
+                param[1].v = se->param[1];
+                param[2].v = se->param[2];
+                param[3].v = se->param[3];
+                param[4].v = se->param[4];
+                param[5].v = se->param[5];
+                param[6].v = se->param[6];
+                e.h.v = se->h;
+                e.group.v = se->group;
+                if(!e.EntityBase::Transform(es,se->timesApplied,
+                        param[0],param[1],param[2],
+                        param[3],param[4],param[5],param[6],
+                        se->asTrans,se->asAxisAngle,se->scale))
+                {
+                    dbp("failed to transform entity %d->%d, %d", 
+                            se->h,se->src, es->type); 
+                    return;
+                }
+                SK.entity.Add(&e);
+                continue;
+            }
 
 default: dbp("bad entity type %d", se->type); return;
         }

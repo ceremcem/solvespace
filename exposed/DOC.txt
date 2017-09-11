@@ -247,6 +247,60 @@ SLVS_E_ARC_OF_CIRCLE
         distance(center, beginning) = distance(center, end)
 
 
+SLVS_E_TRANSFORM
+
+    A trasformed point or normal. This entity is mainly for assembly purpose,
+    where all the imported entity will be fixed, and you create new entities
+    that are transformations of the original ones. The solver will then maintain
+    the relationship between the imported entities, but adjust the
+    transformation parameters instead. The transformation only applies to point
+    and normal. For other entities, you will need to recreate then yourself. For
+    example, for workplane, create new transformed entity of the origin and
+    normal, and then create a new workplane with the transformed entities.
+    
+    The source point/normal entity is specified in
+        
+        src
+
+    The transformation supports translation, rotation, or tranlation and
+    rotation, which is controlled by 
+
+        asTrans         if true, then translation only for point (i.e. only
+                        params[0~3] are used), and copy for normal. If false,
+                        then all seven parameters must be specified for point
+                        transformation, or params[3~6] for normal.
+        asAxisAngle     if non zero, then params[3] is the rotation angle in
+                        degree, and params[4~6] defines a vector of rotation
+                        axis; if zero, then params[3~6] defines a quaternion.
+
+    IMPORTANT: if this transformation belongs to the solving group, and
+    asAxisAngle is false, make sure you add a normal entity consisting of
+    params[3~6] as the quoternion, and belonging to the same solving group. This
+    normal entity will cause the system to auto generate an extra constraint as
+    mentioned in SLVS_E_NORMAL_IN_3D above, without which, the system may not be
+    solved correctly
+
+    The transformation is defined by up to seven parameters. 
+
+        params[0~6]     The first three parameters always cooresponds to 
+                        translation value in x, y and z direction, which are
+                        only effective for point transformation, and ignored for
+                        normal. The remaining four parameters are for rotation,
+                        and their meaning defined by asAxisAngle option
+                        described above.
+
+    You can also specify scales in 
+
+        scale
+
+    And do stepping use
+        
+        timesApplied    indicating the current index of the stepping, so for
+                        example, you perform a roation with angle 10 degree, and
+                        sepcify timesApplied=3, then the current rotation will
+                        be 30 degree.
+
+
 TYPES OF CONSTRAINTS
 ====================
 

@@ -449,6 +449,11 @@ public:
     void GenerateEquations(IdList<Equation,hEquation> *l);
 
     void Clear(void) {}
+
+    bool Transform(EntityBase *src, int timesApplied,
+                   hParam dx, hParam dy, hParam dz,
+                   hParam qw, hParam qx, hParam qy, hParam qz,
+                   bool asTrans, bool asAxisAngle, double scale);
 };
 
 class Entity : public EntityBase {

@@ -791,3 +791,116 @@ void EntityBase::GenerateEquations(IdList<Equation,hEquation> *l) {
     }
 }
 
+// This function is added for minimum support of Link/Assembly in libslvs. 
+//
+// Difference between this function and Group::CopyEntity is that there is no
+// entity handle remap envolved, hence no touching of h and group.h It is so,
+// because libslvs expects the users to manage the group handle by themselves.
+//
+bool EntityBase::Transform(EntityBase *src, int timesApplied,
+                           hParam dx, hParam dy, hParam dz,
+                           hParam qw, hParam qx, hParam qy, hParam qz,
+                           bool asTrans, bool asAxisAngle, double scale)
+{
+    switch(src->type) {
+        case Entity::POINT_N_COPY:
+        case Entity::POINT_N_TRANS:
+        case Entity::POINT_N_ROT_TRANS:
+        case Entity::POINT_N_ROT_AA:
+        case Entity::POINT_IN_3D:
+        case Entity::POINT_IN_2D:
+            if(asTrans) {
+                type = Entity::POINT_N_TRANS;
+                param[0] = dx;
+                param[1] = dy;
+                param[2] = dz;
+            } else {
+                if(asAxisAngle) {
+                    type = Entity::POINT_N_ROT_AA;
+                } else {
+                    type = Entity::POINT_N_ROT_TRANS;
+                }
+                param[0] = dx;
+                param[1] = dy;
+                param[2] = dz;
+                param[3] = qw;
+                param[4] = qx;
+                param[5] = qy;
+                param[6] = qz;
+            }
+            numPoint = src->PointGetNum().ScaledBy(scale);
+            break;
+
+        case Entity::NORMAL_N_COPY:
+        case Entity::NORMAL_N_ROT:
+        case Entity::NORMAL_N_ROT_AA:
+        case Entity::NORMAL_IN_3D:
+        case Entity::NORMAL_IN_2D:
+            if(asTrans) {
+                type = Entity::NORMAL_N_COPY;
+            } else {
+                if(asAxisAngle) {
+                    type = Entity::NORMAL_N_ROT_AA;
+                } else {
+                    type = Entity::NORMAL_N_ROT;
+                }
+                param[0] = qw;
+                param[1] = qx;
+                param[2] = qy;
+                param[3] = qz;
+            }
+            numNormal = src->NormalGetNum();
+            if(scale < 0) numNormal = numNormal.Mirror();
+
+            // TODO: is this okay to copy without remap?
+            point[0] = src->point[0];
+            break;
+
+        case Entity::DISTANCE_N_COPY:
+        case Entity::DISTANCE:
+            type = Entity::DISTANCE_N_COPY;
+            numDistance = src->DistanceGetNum()*fabs(scale);
+            break;
+
+        case Entity::FACE_NORMAL_PT:
+        case Entity::FACE_XPROD:
+        case Entity::FACE_N_ROT_TRANS:
+        case Entity::FACE_N_TRANS:
+        case Entity::FACE_N_ROT_AA:
+            if(asTrans) {
+                type = Entity::FACE_N_TRANS;
+                param[0] = dx;
+                param[1] = dy;
+                param[2] = dz;
+            } else {
+                if(asAxisAngle) {
+                    type = Entity::FACE_N_ROT_AA;
+                } else {
+                    type = Entity::FACE_N_ROT_TRANS;
+                }
+                param[0] = dx;
+                param[1] = dy;
+                param[2] = dz;
+                param[3] = qw;
+                param[4] = qx;
+                param[5] = qy;
+                param[6] = qz;
+            }
+            numPoint  = src->FaceGetPointNum();
+            {
+                Vector n = src->FaceGetNormalNum();
+                numNormal = Quaternion::From(0, n.x, n.y, n.z).ScaledBy(scale);
+            }
+            break;
+
+        default: 
+            return false;
+    }
+
+    extraPoints = src->extraPoints;
+    timesApplied = timesApplied;
+    str = src->str;
+    font = src->font;
+    return true;
+}
+

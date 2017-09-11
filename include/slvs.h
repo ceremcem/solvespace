@@ -55,15 +55,13 @@ typedef struct {
 
 #define SLVS_E_DISTANCE             70000
 
-/* The special point, normal, and distance types used for parametric step
- * and repeat, extrude, and assembly are currently not exposed. Please
- * contact us if you are interested in using these. */
-
 #define SLVS_E_WORKPLANE            80000
 #define SLVS_E_LINE_SEGMENT         80001
 #define SLVS_E_CUBIC                80002
 #define SLVS_E_CIRCLE               80003
 #define SLVS_E_ARC_OF_CIRCLE        80004
+
+#define SLVS_E_TRANSFORM            90000
 
 typedef struct {
     Slvs_hEntity    h;
@@ -76,7 +74,19 @@ typedef struct {
     Slvs_hEntity    normal;
     Slvs_hEntity    distance;
 
-    Slvs_hParam     param[4];
+    Slvs_hParam     param[7];
+
+    /* For SLVS_E_TRANSFORM.
+     *
+     * For simplicity reaons, we just declare the following parameter as extra
+     * member. We could've union these to save some memory if desired. 
+     */
+    Slvs_hEntity    src;
+    double          scale;
+    int             timesApplied;
+    int             asTrans;
+    int             asAxisAngle;
+
 } Slvs_Entity;
 
 #define SLVS_C_POINTS_COINCIDENT        100000
@@ -189,6 +199,7 @@ typedef struct {
 #define SLVS_RESULT_INCONSISTENT        1
 #define SLVS_RESULT_DIDNT_CONVERGE      2
 #define SLVS_RESULT_TOO_MANY_UNKNOWNS   3
+#define SLVS_RESULT_INIT_ERROR          4
     int                 result;
 } Slvs_System;
 
@@ -373,6 +384,31 @@ static inline Slvs_Entity Slvs_MakeWorkplane(Slvs_hEntity h, Slvs_hGroup group,
     return r;
 }
 
+static inline Slvs_Entity Slvs_MakeTransform(Slvs_hEntity h, Slvs_hGroup group, Slvs_hEntity src,
+                                Slvs_hParam dx, Slvs_hParam dy, Slvs_hParam dz,
+                                Slvs_hParam qw, Slvs_hParam qx, Slvs_hParam qy, Slvs_hParam qz,
+                                int asTrans, int asAxisAngle, double scale,int timesApplied)
+{
+    Slvs_Entity r;
+    memset(&r, 0, sizeof(r));
+    r.h = h;
+    r.group = group;
+    r.type = SLVS_E_TRANSFORM;
+    r.src = src;
+    r.param[0] = dx;
+    r.param[1] = dy;
+    r.param[2] = dz;
+    r.param[3] = qw;
+    r.param[4] = qx;
+    r.param[5] = qy;
+    r.param[6] = qz;
+    r.asTrans = asTrans;
+    r.asAxisAngle = asAxisAngle;
+    r.scale = scale;
+    r.timesApplied = timesApplied;
+    return r;
+}
+
 static inline Slvs_Constraint Slvs_MakeConstraint(Slvs_hConstraint h,
                                                   Slvs_hGroup group,
                                                   int type,
@@ -396,6 +432,7 @@ static inline Slvs_Constraint Slvs_MakeConstraint(Slvs_hConstraint h,
     r.entityB = entityB;
     return r;
 }
+
 
 #ifdef __cplusplus
 }
