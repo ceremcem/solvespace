@@ -69,9 +69,48 @@ set_target_properties(slvs PROPERTIES
     VERSION ${solvespace_VERSION_MAJOR}.${solvespace_VERSION_MINOR}
     SOVERSION 1)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+add_library(slvs_static STATIC
+    ${libslvs_SOURCES}
+    ${libslvs_HEADERS}
+    ${util_SOURCES}
+    lib.cpp)
+
+target_compile_definitions(slvs_static
+    PRIVATE -DLIBRARY)
+
+target_include_directories(slvs_static
+    PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
+set_target_properties(slvs_static PROPERTIES
+    PUBLIC_HEADER ${CMAKE_SOURCE_DIR}/include/slvs.h
+    OUTPUT_NAME slvs)
+
+add_library(slvs_static_excp STATIC
+    ${libslvs_SOURCES}
+    ${libslvs_HEADERS}
+    ${util_SOURCES}
+    lib.cpp)
+
+target_compile_definitions(slvs_static_excp
+    PRIVATE -DLIBRARY -DSLVS_OOPS_EXCEPTION)
+
+target_include_directories(slvs_static_excp
+    PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
+set_target_properties(slvs_static_excp PROPERTIES
+    PUBLIC_HEADER ${CMAKE_SOURCE_DIR}/include/slvs.h
+    OUTPUT_NAME slvs_excp)
+
+
 if(NOT WIN32)
     install(TARGETS slvs
         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+    install(TARGETS slvs_static
+        ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 endif()
 
@@ -404,3 +443,5 @@ add_custom_target(solvespace-valgrind
         --malloc-fill=0xac
         --free-fill=0xde
         $<TARGET_FILE:solvespace>)
+
+add_subdirectory(swig)
