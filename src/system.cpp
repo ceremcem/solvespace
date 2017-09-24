@@ -402,7 +402,7 @@ int System::Solve(Group *g, int *dof, List<hConstraint> *bad,
     WriteEquationsExceptFor(Constraint::NO_CONSTRAINT, g);
 
     int i;
-    bool rankOk;
+    bool rankOk = true;
 
 /*
     dbp("%d equations", eq.n);

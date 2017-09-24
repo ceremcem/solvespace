@@ -200,6 +200,7 @@ typedef struct {
 #define SLVS_RESULT_DIDNT_CONVERGE      2
 #define SLVS_RESULT_TOO_MANY_UNKNOWNS   3
 #define SLVS_RESULT_INIT_ERROR          4
+#define SLVS_RESULT_REDUNDANT_OK        5
     int                 result;
 } Slvs_System;
 
