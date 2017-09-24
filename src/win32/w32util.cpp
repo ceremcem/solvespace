@@ -11,7 +11,7 @@
 namespace SolveSpace {
 static HANDLE PermHeap, TempHeap;
 
-void dbp(const char *str, ...)
+const char *dbp(const char *str, ...)
 {
     va_list f;
     static char buf[1024*50];
@@ -22,6 +22,7 @@ void dbp(const char *str, ...)
     // The native version of OutputDebugString, unlike most others,
     // is OutputDebugStringA.
     OutputDebugStringA(buf);
+    return buf;
 }
 
 std::string Narrow(const wchar_t *in)

@@ -13,7 +13,7 @@
 
 namespace SolveSpace {
 
-void dbp(const char *str, ...)
+const char *dbp(const char *str, ...)
 {
     va_list f;
     static char buf[1024*50];
@@ -23,6 +23,7 @@ void dbp(const char *str, ...)
 
     fputs(buf, stderr);
     fputc('\n', stderr);
+    return buf;
 }
 
 FILE *ssfopen(const std::string &filename, const char *mode)

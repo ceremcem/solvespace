@@ -85,6 +85,16 @@ void Slvs_Solve(Slvs_System *ssys, Slvs_hGroup shg)
         IsInit = 1;
     }
 
+    SYS.param.Clear();
+    SYS.entity.Clear();
+    SYS.eq.Clear();
+    SYS.dragged.Clear();
+    SK.param.Clear();
+    SK.entity.Clear();
+    SK.constraint.Clear();
+
+    FreeAllTemporary();
+
     ssys->result = SLVS_RESULT_INIT_ERROR;
 
     int i;
@@ -122,6 +132,7 @@ case SLVS_E_TRANSFORM: {
                 if(!es) {
                     dbp("transforming entity source not found, %d->%d", 
                             se->h,se->src); 
+                    oops();
                     return;
                 }
                 hParam param[7];

@@ -56,13 +56,19 @@ struct FT_FaceRec_;
 #   define EXACT(expr) (expr)
 #endif
 
+#ifndef SLVS_OOPS_EXCEPTION
 // Debugging functions
-#ifdef NDEBUG
-#define oops() do { dbp("oops at line %d, file %s\n", __LINE__, __FILE__); \
+#   ifdef NDEBUG
+#       define oops() do { dbp("oops at line %d, file %s\n", __LINE__, __FILE__); \
                     exit(-1); } while(0)
-#else
-#define oops() do { dbp("oops at line %d, file %s\n", __LINE__, __FILE__); \
+#   else
+#       define oops() do { dbp("oops at line %d, file %s\n", __LINE__, __FILE__); \
                     abort(); } while(0)
+#   endif
+#else
+#       define oops() do { \
+            throw std::runtime_error(dbp("slvs oops at %s(%d)", __FILE__, __LINE__)); \
+        }while(0);
 #endif
 
 #ifndef isnan
@@ -249,7 +255,7 @@ void GetTextWindowSize(int *w, int *h);
 int64_t GetMilliseconds(void);
 int64_t GetUnixTime(void);
 
-void dbp(const char *str, ...);
+const char *dbp(const char *str, ...);
 #define DBPTRI(tri) \
     dbp("tri: (%.3f %.3f %.3f) (%.3f %.3f %.3f) (%.3f %.3f %.3f)", \
         CO((tri).a), CO((tri).b), CO((tri).c))
