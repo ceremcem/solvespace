@@ -63,7 +63,13 @@ public:
 
         if(!group) group = GroupHandle;
 
-        Slvs_Solve(&sys, group);
+        try {
+            Slvs_Solve(&sys, group);
+        }catch(std::exception &e) {
+            Failed.clear();
+            Dof = -1;
+            throw;
+        }
         Dof = sys.dof;
 
         int i = 0;
@@ -80,7 +86,7 @@ public:
     {\
         auto it = _name##Map.find(h);\
         if(it==_name##Map.end())\
-            throw std::invalid_argument("handle not found");\
+            throw std::invalid_argument(#_name " handle not found");\
         return it->second;\
     }\
     void remove##_name(Slvs_h##_name h) \
@@ -88,20 +94,20 @@ public:
     {\
         auto it = _name##Map.find(h);\
         if(it==_name##Map.end())\
-            throw std::invalid_argument("handle not found");\
+            throw std::invalid_argument(#_name "handle not found");\
         _name##Map.erase(it);\
     }\
     Slvs_h##_name add##_name(const Slvs_##_name &v, bool overwrite=false) \
         throw(std::invalid_argument)\
     {\
         if(!v.h)\
-            throw std::invalid_argument("invalid handle");\
+            throw std::invalid_argument("invalid " #_name " handle");\
         if(!v.group)\
             throw std::invalid_argument("invalid group");\
         auto it = _name##Map.find(v.h);\
         if(it!=_name##Map.end()) {\
             if(!overwrite)\
-                throw std::invalid_argument("duplicate handle");\
+                throw std::invalid_argument("duplicate " #_name " handle");\
             it->second = v;\
         }else\
             _name##Map[v.h] = v;\
@@ -380,30 +386,30 @@ public:
     }
 
     Slvs_hConstraint addMidPoint(Slvs_hEntity pt, Slvs_hEntity line,
-            Slvs_hEntity wrkpln=0, Slvs_hGroup group=0, Slvs_hConstraint h=0)
+            Slvs_hEntity wrkpln, Slvs_hGroup group=0, Slvs_hConstraint h=0)
     {
         return addConstraintV(SLVS_C_AT_MIDPOINT,wrkpln,0,pt,0,line,0,group,h);
     }
 
     Slvs_hConstraint addPointsHorizontal(Slvs_hEntity p1, Slvs_hEntity p2,
-            Slvs_hEntity wrkpln=0, Slvs_hGroup group=0, Slvs_hConstraint h=0)
+            Slvs_hEntity wrkpln, Slvs_hGroup group=0, Slvs_hConstraint h=0)
     {
         return addConstraintV(SLVS_C_HORIZONTAL,wrkpln,0,p1,p2,0,0,group,h);
     }
 
     Slvs_hConstraint addPointsVertical(Slvs_hEntity p1, Slvs_hEntity p2,
-            Slvs_hEntity wrkpln=0, Slvs_hGroup group=0, Slvs_hConstraint h=0)
+            Slvs_hEntity wrkpln, Slvs_hGroup group=0, Slvs_hConstraint h=0)
     {
         return addConstraintV(SLVS_C_VERTICAL,wrkpln,0,p1,p2,0,0,group,h);
     }
 
-    Slvs_hConstraint addLineHorizontal(Slvs_hEntity line, Slvs_hEntity wrkpln=0, 
+    Slvs_hConstraint addLineHorizontal(Slvs_hEntity line, Slvs_hEntity wrkpln, 
                                        Slvs_hGroup group=0, Slvs_hConstraint h=0)
     {
         return addConstraintV(SLVS_C_HORIZONTAL,wrkpln,0,0,0,line,0,group,h);
     }
 
-    Slvs_hConstraint addLineVertical(Slvs_hEntity line, Slvs_hEntity wrkpln=0, 
+    Slvs_hConstraint addLineVertical(Slvs_hEntity line, Slvs_hEntity wrkpln, 
                                     Slvs_hGroup group=0, Slvs_hConstraint h=0)
     {
         return addConstraintV(SLVS_C_VERTICAL,wrkpln,0,0,0,line,0,group,h);
