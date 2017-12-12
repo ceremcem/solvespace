@@ -1,13 +1,18 @@
 # Include python
 
-find_package(PythonInterp REQUIRED)
-set(Python_ADDITIONAL_VERSIONS ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR})
-message(STATUS "python version ${Python_ADDITIONAL_VERSIONS}")
-IF (NOT DEFINED PYTHON_VERSION_STRING)
+if (${CMAKE_SYSTEM_NAME} STREQUAL Windows)
     find_package(PythonLibs REQUIRED)
-ELSE (NOT DEFINED PYTHON_VERSION_STRING)
-    find_package(PythonLibs ${PYTHON_VERSION_STRING} EXACT REQUIRED)
-ENDIF(NOT DEFINED PYTHON_VERSION_STRING)
+    message(STATUS "python version ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
+else()
+    find_package(PythonInterp REQUIRED)
+    set(Python_ADDITIONAL_VERSIONS ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR})
+    message(STATUS "python version ${Python_ADDITIONAL_VERSIONS}")
+    if (NOT DEFINED PYTHON_VERSION_STRING)
+        find_package(PythonLibs REQUIRED)
+    else (NOT DEFINED PYTHON_VERSION_STRING)
+        find_package(PythonLibs ${PYTHON_VERSION_STRING} EXACT REQUIRED)
+    endif(NOT DEFINED PYTHON_VERSION_STRING)
+endif()
 
 include_directories(${PYTHON_INCLUDE_PATH})
 
@@ -16,6 +21,8 @@ if (WIN32)
 else()
 	set(PYLIB_SUFFIX .so)
 endif()
+
+add_definitions(-DSLVS_STATIC_LIB)
 
 set(PYTHON_PACKAGE "slvs")
 set(LIBNAME _${PYTHON_PACKAGE}${PYLIB_SUFFIX})
@@ -26,6 +33,7 @@ include_directories(../ ../../../include/)
 # Add swig module
 swig_add_module(slvs python ../slvs.i)
 swig_link_libraries(slvs slvs_static_excp ${PYTHON_LIBRARIES})
+set_target_properties(slvs PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)
 
 # set_target_properties(_slvs PROPERTIES
 #     OUTPUT_NAME "_slvs"
