@@ -13,4 +13,4 @@
 	url = https://github.com/solvespace/libdxfrw.git
 [submodule "extlib/win32"]
 	path = extlib/win32
-	url = git@github.com:realthunder/pythonlib_mingw.git
+	url = https://github.com/realthunder/pythonlib_mingw.git
