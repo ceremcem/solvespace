@@ -31,7 +31,11 @@ set_source_files_properties(../slvs.i PROPERTIES CPLUSPLUS ON)
 include_directories(../ ../../../include/)
 
 # Add swig module
-swig_add_module(slvs python ../slvs.i)
+if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
+    swig_add_module(slvs python ../slvs.i)
+else()
+    swig_add_library(slvs LANGUAGE python SOURCES ../slvs.i)
+endif()
 swig_link_libraries(slvs slvs_static_excp ${PYTHON_LIBRARIES})
 set_target_properties(slvs PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)
 
