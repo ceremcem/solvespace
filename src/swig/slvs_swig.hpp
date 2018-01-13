@@ -65,7 +65,7 @@ public:
 
         try {
             Slvs_Solve(&sys, group);
-        }catch(std::exception &e) {
+        }catch(std::exception &) {
             Failed.clear();
             Dof = -1;
             throw;
@@ -122,13 +122,10 @@ public:
 
     Slvs_hParam addParamV(double val, Slvs_hGroup group=0, Slvs_hParam h=0) 
     {
-#define SLVS_INIT(_name,_v,...) \
+#define SLVS_ADD(_name,...) \
         if(!h) h = ++_name##Handle;\
         if(!group) group=GroupHandle;\
-        auto _var = Slvs_Make##_v(h,group, ## __VA_ARGS__);\
-
-#define SLVS_ADD(_name,...) \
-        SLVS_INIT(_name,_name,## __VA_ARGS__);\
+        auto _var = Slvs_Make##_name(h,group, ## __VA_ARGS__);\
         return add##_name(_var);\
 
         SLVS_ADD(Param,val);
@@ -138,8 +135,10 @@ public:
                             Slvs_hParam u, Slvs_hParam v,
                             Slvs_hGroup group=0, Slvs_hEntity h=0)
     {
-#define SLVS_ADD_ENTITY(...) \
-        SLVS_INIT(Entity, ## __VA_ARGS__);\
+#define SLVS_ADD_ENTITY(_name,...) \
+        if(!h) h = ++EntityHandle;\
+        if(!group) group=GroupHandle;\
+        auto _var = Slvs_Make##_name(h,group, ## __VA_ARGS__);\
         return addEntity(_var);
 
         SLVS_ADD_ENTITY(Point2d,wrkpln,u,v);
@@ -343,7 +342,10 @@ public:
         Slvs_hEntity l1,Slvs_hEntity l2, Slvs_hEntity l3, Slvs_hEntity l4,
         Slvs_hEntity wrkpln=0, Slvs_hGroup group=0, Slvs_hConstraint h=0)
     {
-#define SLVS_INIT_CSTR(...)  SLVS_INIT(Constraint,Constraint,## __VA_ARGS__)
+#define SLVS_INIT_CSTR(...) \
+        if(!h) h = ++ConstraintHandle;\
+        if(!group) group=GroupHandle;\
+        auto _var = Slvs_MakeConstraint(h,group, ## __VA_ARGS__);\
 
         SLVS_INIT_CSTR(SLVS_C_EQUAL_ANGLE,wrkpln,0,0,0,l1,l2);
         _var.entityC = l3;
