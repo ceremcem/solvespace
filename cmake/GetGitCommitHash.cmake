@@ -2,6 +2,16 @@ function(get_git_commit_hash)
     get_filename_component(GIT_DESCRIBE_CMAKE_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
     get_filename_component(GIT_ROOT ${GIT_DESCRIBE_CMAKE_DIR} PATH)
     set(GIT_DIR "${GIT_ROOT}/.git")
+    if(NOT EXISTS ${GIT_DIR})
+        message(WARNING "Not a git repository")
+        return()
+    elseif(NOT IS_DIRECTORY ${GIT_DIR})
+        # In case we are included as a git submodule.
+        file(READ ${GIT_DIR} GIT_SUB_DIR)
+        string(REPLACE "gitdir: " "" GIT_SUB_DIR ${GIT_SUB_DIR})
+        string(STRIP ${GIT_SUB_DIR} GIT_SUB_DIR)
+        set(GIT_DIR "${GIT_ROOT}/${GIT_SUB_DIR}")
+    endif()
 
     # Add a CMake configure dependency to the currently checked out revision.
     set(GIT_DEPENDS ${GIT_DIR}/HEAD)
