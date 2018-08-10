@@ -6,6 +6,7 @@
 //
 // Copyright 2008-2013 Jonathan Westhues.
 //-----------------------------------------------------------------------------
+#include <list>
 #include "solvespace.h"
 
 ExprVector ExprVector::From(Expr *x, Expr *y, Expr *z) {
@@ -210,6 +211,38 @@ Expr *ExprQuaternion::Magnitude(void) {
             (vz->Square())))))->Sqrt();
 }
 
+struct ExprChunk {
+    std::array<Expr,8192> chunk;
+    size_t count;
+
+    bool full() {
+        return count==chunk.size();
+    }
+    Expr *get() {
+        return &chunk[count++];
+    }
+    ExprChunk() :count(0)
+    {}
+};
+
+static std::list<ExprChunk> _ExprMem(1);
+static auto _ExprMemIt = _ExprMem.begin();
+
+Expr *Expr::AllocExpr() {
+    if(_ExprMemIt->full()) {
+        if(++_ExprMemIt == _ExprMem.end()) {
+            _ExprMem.emplace_back();
+            --_ExprMemIt;
+        }
+    }
+    return _ExprMemIt->get();
+}
+
+void Expr::FreeAll() {
+    for(auto &v : _ExprMem)
+        v.count = 0;
+    _ExprMemIt = _ExprMem.begin();
+}
 
 Expr *Expr::From(hParam p) {
     Expr *r = AllocExpr();

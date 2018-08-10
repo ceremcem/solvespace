@@ -391,6 +391,7 @@ void SolveSpaceUI::GenerateAll(GenerateType type, bool andFindFree, bool genForB
     }
 
     FreeAllTemporary();
+    Expr::FreeAll();
     allConsistent = true;
     return;
 
@@ -537,6 +538,7 @@ void SolveSpaceUI::SolveGroup(hGroup hg, bool andFindFree) {
                            &(g->solved.remove), true, andFindFree);
     g->solved.how = how;
     FreeAllTemporary();
+    Expr::FreeAll();
 }
 
 bool SolveSpaceUI::ActiveGroupsOkay() {

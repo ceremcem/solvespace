@@ -377,6 +377,7 @@ void System::FindWhichToRemoveToFixJacobian(Group *g, List<hConstraint> *bad) {
 
             param.ClearTags();
             eq.Clear();
+            Expr::FreeAll();
             WriteEquationsExceptFor(c->h, g);
             eq.ClearTags();
 

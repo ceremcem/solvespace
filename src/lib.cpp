@@ -94,6 +94,7 @@ void Slvs_Solve(Slvs_System *ssys, Slvs_hGroup shg)
     SK.constraint.Clear();
 
     FreeAllTemporary();
+    Expr::FreeAll();
 
     ssys->result = SLVS_RESULT_INIT_ERROR;
 
@@ -305,6 +306,7 @@ default: dbp("bad constraint type %d", sc->type); return;
     SK.constraint.Clear();
 
     FreeAllTemporary();
+    Expr::FreeAll();
 }
 
 } /* extern "C" */

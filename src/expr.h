@@ -60,8 +60,8 @@ public:
     Expr() { }
     Expr(double val) : op(CONSTANT) { v = val; }
 
-    static inline Expr *AllocExpr(void)
-        { return (Expr *)AllocTemporary(sizeof(Expr)); }
+    static inline Expr *AllocExpr(void);
+    static void FreeAll();
 
     static Expr *From(hParam p);
     static Expr *From(double v);
