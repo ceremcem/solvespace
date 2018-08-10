@@ -550,8 +550,8 @@ std::string Expr::Print(void) {
 
     char c;
     switch(op) {
-        case PARAM:     return ssprintf("param(%08x)", parh.v);
-        case PARAM_PTR: return ssprintf("param(p%08x)", parp->h.v);
+        case PARAM:     return ssprintf("p(%x,%g)", parh.v,SK.GetParam(parh)->val);
+        case PARAM_PTR: return ssprintf("p(p%x,%g)", parp->h.v,SK.GetParam(parp->h)->val);
 
         case CONSTANT:  return ssprintf("%.3f", v);
 
