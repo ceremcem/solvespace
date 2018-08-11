@@ -40,7 +40,7 @@ public:
         Dof = -1;
     }
 
-    int solve(Slvs_hGroup group=0, bool reportFailed=false) {
+    int solve(Slvs_hGroup group=0, bool reportFailed=false, bool findFreeParams=false) {
         Slvs_System sys = {};
 #define SLVS_PREPARE(_name,_n,_ns) \
         _name.clear();\
@@ -60,6 +60,7 @@ public:
             sys.failed = &Failed[0];
             sys.calculateFaileds = 1;
         }
+        sys.findFreeParams = findFreeParams;
 
         if(!group) group = GroupHandle;
 

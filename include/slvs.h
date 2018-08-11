@@ -44,6 +44,7 @@ typedef struct {
     Slvs_hParam     h;
     Slvs_hGroup     group;
     double          val;
+    int             free;
 } Slvs_Param;
 
 
@@ -176,6 +177,8 @@ typedef struct {
      * If calculateFaileds is true, then the solver will do so, otherwise
      * not. */
     int                 calculateFaileds;
+
+    int                 findFreeParams;
 
     /*** OUTPUT VARIABLES
      *

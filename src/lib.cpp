@@ -254,7 +254,8 @@ default: dbp("bad constraint type %d", sc->type); return;
 
     // Now we're finally ready to solve!
     bool andFindBad = ssys->calculateFaileds ? true : false;
-    int how = SYS.Solve(&g, &(ssys->dof), &bad, andFindBad, false);
+    bool andFindFree = ssys->findFreeParams ? true : false;
+    int how = SYS.Solve(&g, &(ssys->dof), &bad, andFindBad, andFindFree);
 
     switch(how) {
         case System::SOLVED_OKAY:
@@ -284,7 +285,9 @@ default: dbp("bad constraint type %d", sc->type); return;
     for(i = 0; i < ssys->params; i++) {
         Slvs_Param *sp = &(ssys->param[i]);
         hParam hp = { sp->h };
-        sp->val = SK.GetParam(hp)->val;
+        auto param = SK.GetParam(hp);
+        sp->val = param->val;
+        sp->free = param->free;
     }
 
     if(ssys->failed) {
