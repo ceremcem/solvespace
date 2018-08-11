@@ -6,6 +6,7 @@
 //
 // Copyright 2008-2013 Jonathan Westhues.
 //-----------------------------------------------------------------------------
+#include <array>
 #include <list>
 #include "solvespace.h"
 
