@@ -118,7 +118,40 @@ public:
     SLVS_ACCESSOR(Constraint)
     SLVS_ACCESSOR(Entity)
 
-#define SLVS_SET(_name) \
+    Slvs_hParam getEntityParam(Slvs_hEntity h, int idx) const
+    throw(std::invalid_argument) 
+    {
+#define SLVS_GET_ENTITY(_name,_idx) \
+        if(idx<0 || idx>=_idx)\
+            throw(std::invalid_argument("invalid " #_name " index"));\
+        auto it = EntityMap.find(h);\
+        if(it==EntityMap.end())\
+            throw std::invalid_argument("Entity handle not found")
+
+        SLVS_GET_ENTITY(param,7);
+        return it->second.param[idx];
+    }
+
+    void setEntityParam(Slvs_hEntity h, int idx, Slvs_hParam hParam)
+    throw(std::invalid_argument) 
+    {
+        SLVS_GET_ENTITY(param,7);
+        it->second.param[idx] = hParam;
+    }
+
+    Slvs_hParam getEntityPoint(Slvs_hEntity h, int idx) const
+    throw(std::invalid_argument) 
+    {
+        SLVS_GET_ENTITY(point,4);
+        return it->second.point[idx];
+    }
+
+    void setEntityPoint(Slvs_hEntity h, int idx, Slvs_hEntity hEntity)
+    throw(std::invalid_argument) 
+    {
+        SLVS_GET_ENTITY(point,4);
+        it->second.point[idx] = hEntity;
+    }
 
     Slvs_hParam addParamV(double val, Slvs_hGroup group=0, Slvs_hParam h=0) 
     {
