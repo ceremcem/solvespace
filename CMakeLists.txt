@@ -99,6 +99,8 @@ if(SANITIZE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZE_FLAGS}")
 endif()
 
+if(ENABLE_GUI)
+
 # dependencies
 find_package(OpenGL REQUIRED)
 
@@ -161,14 +163,12 @@ if(WIN32)
     endif()
 
     if(NOT MINGW)
-        if(ENABLE_GUI)
-            message(STATUS "Using prebuilt SpaceWare")
-            set(SPACEWARE_FOUND TRUE)
-            set(SPACEWARE_INCLUDE_DIR
-                "${CMAKE_SOURCE_DIR}/extlib/si")
-            set(SPACEWARE_LIBRARIES
-                "${CMAKE_SOURCE_DIR}/extlib/si/siapp.lib")
-        endif()
+        message(STATUS "Using prebuilt SpaceWare")
+        set(SPACEWARE_FOUND TRUE)
+        set(SPACEWARE_INCLUDE_DIR
+            "${CMAKE_SOURCE_DIR}/extlib/si")
+        set(SPACEWARE_LIBRARIES
+            "${CMAKE_SOURCE_DIR}/extlib/si/siapp.lib")
     endif()
 elseif(APPLE)
     set(CMAKE_FIND_FRAMEWORK LAST)
@@ -186,22 +186,20 @@ else() # Linux and compatible systems
     pkg_check_modules(JSONC REQUIRED json-c)
     pkg_check_modules(FREETYPE REQUIRED freetype2)
 
-    if(ENABLE_GUI)
-        pkg_check_modules(GLEW REQUIRED glew)
-        find_package(SpaceWare)
-        set(HAVE_GTK TRUE)
-        if(GUI STREQUAL "gtk3")
-            set(HAVE_GTK3 TRUE)
-            pkg_check_modules(GTKMM REQUIRED gtkmm-3.0 pangomm-1.4 x11)
-        elseif(GUI STREQUAL "gtk2")
-            set(HAVE_GTK2 TRUE)
-            pkg_check_modules(GTKMM REQUIRED gtkmm-2.4 pangomm-1.4 x11)
-        else()
-            message(FATAL_ERROR "GUI unrecognized: ${GUI}")
-        endif()
+    pkg_check_modules(GLEW REQUIRED glew)
+    find_package(SpaceWare)
+    set(HAVE_GTK TRUE)
+    if(GUI STREQUAL "gtk3")
+        set(HAVE_GTK3 TRUE)
+        pkg_check_modules(GTKMM REQUIRED gtkmm-3.0 pangomm-1.4 x11)
+    elseif(GUI STREQUAL "gtk2")
+        set(HAVE_GTK2 TRUE)
+        pkg_check_modules(GTKMM REQUIRED gtkmm-2.4 pangomm-1.4 x11)
     else()
-        set(HAVE_GTK OFF)
+        message(FATAL_ERROR "GUI unrecognized: ${GUI}")
     endif()
+endif()
+
 endif()
 
 # components
