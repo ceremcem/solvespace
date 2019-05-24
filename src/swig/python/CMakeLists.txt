@@ -1,10 +1,10 @@
 # Include python
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL Windows)
-    find_package(PythonLibs REQUIRED)
+    find_package(PythonLibs ${PYTHON_VERSION_MAJOR} REQUIRED)
     message(STATUS "python version ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
 else()
-    find_package(PythonInterp REQUIRED)
+    find_package(PythonInterp ${PYTHON_VERSION_MAJOR} REQUIRED)
     set(Python_ADDITIONAL_VERSIONS ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR})
     message(STATUS "python version ${Python_ADDITIONAL_VERSIONS}")
     if (NOT DEFINED PYTHON_VERSION_STRING)
