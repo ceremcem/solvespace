@@ -422,7 +422,7 @@ public:
     }
 
     Slvs_hConstraint addMidPoint(Slvs_hEntity pt, Slvs_hEntity line,
-            Slvs_hEntity wrkpln, Slvs_hGroup group=0, Slvs_hConstraint h=0)
+            Slvs_hEntity wrkpln=0, Slvs_hGroup group=0, Slvs_hConstraint h=0)
     {
         return addConstraintV(SLVS_C_AT_MIDPOINT,wrkpln,0,pt,0,line,0,group,h);
     }
