@@ -30,9 +30,11 @@
 #endif
 #ifdef __APPLE__
 #   include <strings.h> // for strcasecmp in file.cpp
-#   include <OpenGL/gl.h>
-#   include <OpenGL/glu.h>
-#else
+#   ifndef LIBRARY
+#       include <OpenGL/gl.h>
+#       include <OpenGL/glu.h>
+#   endif
+#elif ! defined(LIBRARY)
 #   include <GL/gl.h>
 #   include <GL/glu.h>
 #endif
@@ -324,6 +326,7 @@ public:
     utf8_iterator end()   const { return utf8_iterator(&str[str.length()]); }
 };
 
+#ifndef LIBRARY
 void ssglLineWidth(GLfloat width);
 void ssglVertex3v(Vector u);
 void ssglAxisAlignedQuad(double l, double r, double t, double b, bool lone = true);
@@ -367,6 +370,9 @@ void ssglInitializeBitmapFont();
 void ssglBitmapText(const std::string &str, Vector p);
 void ssglBitmapCharQuad(char32_t chr, double x, double y);
 int ssglBitmapCharWidth(char32_t chr);
+
+#endif // LIBRARY
+
 #define TEXTURE_BACKGROUND_IMG  10
 #define TEXTURE_DRAW_PIXELS     20
 #define TEXTURE_COLOR_PICKER_2D 30
