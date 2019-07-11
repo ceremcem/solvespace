@@ -37,7 +37,8 @@ else()
     swig_add_library(slvs LANGUAGE python SOURCES ../slvs.i)
 endif()
 swig_link_libraries(slvs slvs_static_excp ${PYTHON_LIBRARIES})
-set_target_properties(slvs PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)
+
+# set_target_properties(slvs PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)
 
 # set_target_properties(_slvs PROPERTIES
 #     OUTPUT_NAME "_slvs"

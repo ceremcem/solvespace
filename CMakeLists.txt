@@ -32,8 +32,6 @@ string(SUBSTRING "${GIT_COMMIT_HASH}" 0 8 solvespace_GIT_HASH)
 
 set(ENABLE_GUI OFF CACHE BOOL
     "Whether the graphical interface is enabled (command line interface always is)")
-set(ENABLE_DXFRW OFF CACHE BOOL
-    "build with dxfrw")
 
 if (ENABLE_GUI)
     if(NOT WIN32 AND NOT APPLE)
@@ -104,11 +102,8 @@ if(ENABLE_GUI)
 # dependencies
 find_package(OpenGL REQUIRED)
 
-
-if(ENABLE_DXFRW)
-    message(STATUS "Using in-tree libdxfrw")
-    add_subdirectory(extlib/libdxfrw)
-endif()
+message(STATUS "Using in-tree libdxfrw")
+add_subdirectory(extlib/libdxfrw)
 
 if(WIN32)
     # Configure Freetype first. If done later, it will notice that
