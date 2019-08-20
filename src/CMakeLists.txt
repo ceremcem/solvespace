@@ -104,13 +104,11 @@ set_target_properties(slvs_static_excp PROPERTIES
     OUTPUT_NAME slvs_excp)
 
 
+if(ENABLE_GUI)
+
 if(NOT WIN32)
     install(TARGETS slvs
         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-    install(TARGETS slvs_static
-        ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 endif()
 
@@ -348,35 +346,34 @@ set(solvespace_SOURCES
     srf/surfinter.cpp
     srf/triangulate.cpp)
 
-if(ENABLE_GUI)
-    add_executable(solvespace WIN32 MACOSX_BUNDLE
-        ${libslvs_HEADERS}
-        ${libslvs_SOURCES}
-        ${util_SOURCES}
-        ${platform_SOURCES}
-        ${platform_BUNDLED_RESOURCES}
-        ${generated_SOURCES}
-        ${generated_HEADERS}
-        ${solvespace_HEADERS}
-        ${solvespace_SOURCES})
+add_executable(solvespace WIN32 MACOSX_BUNDLE
+    ${libslvs_HEADERS}
+    ${libslvs_SOURCES}
+    ${util_SOURCES}
+    ${platform_SOURCES}
+    ${platform_BUNDLED_RESOURCES}
+    ${generated_SOURCES}
+    ${generated_HEADERS}
+    ${solvespace_HEADERS}
+    ${solvespace_SOURCES})
 
+target_link_libraries(solvespace
+    dxfrw
+    ${OPENGL_LIBRARIES}
+    ${PNG_LIBRARIES}
+    ${ZLIB_LIBRARIES}
+    ${FREETYPE_LIBRARIES}
+    ${platform_LIBRARIES})
+
+if(WIN32 AND NOT MINGW)
+    set_target_properties(solvespace PROPERTIES
+        LINK_FLAGS "/MANIFEST:NO /SAFESEH:NO")
+endif()
+
+if(SPACEWARE_FOUND)
     target_link_libraries(solvespace
-        dxfrw
-        ${OPENGL_LIBRARIES}
-        ${PNG_LIBRARIES}
-        ${ZLIB_LIBRARIES}
-        ${FREETYPE_LIBRARIES}
-        ${platform_LIBRARIES})
-
-    if(WIN32 AND NOT MINGW)
-        set_target_properties(solvespace PROPERTIES
-            LINK_FLAGS "/MANIFEST:NO /SAFESEH:NO")
-    endif()
-
-    if(SPACEWARE_FOUND)
-        target_link_libraries(solvespace
-            ${SPACEWARE_LIBRARIES})
-    endif()
+        ${SPACEWARE_LIBRARIES})
+endif()
 
 if(APPLE)
     set(fixups)
@@ -445,7 +442,7 @@ add_custom_target(solvespace-valgrind
         --free-fill=0xde
         $<TARGET_FILE:solvespace>)
 
-endif()
+endif(ENABLE_GUI)
 
 add_subdirectory(swig)
 

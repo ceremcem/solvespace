@@ -38,21 +38,9 @@ else()
 endif()
 swig_link_libraries(slvs slvs_static_excp ${PYTHON_LIBRARIES})
 
-# set_target_properties(slvs PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)
-
-# set_target_properties(_slvs PROPERTIES
-#     OUTPUT_NAME "_slvs"
-#     SUFFIX ${PYLIB_SUFFIX})
-
-# Files to install with Python
-set(PYTHON_INSTALL_FILES slvs.py ${LIBNAME})
-
-# Configure setup.py and copy to output directory
-set(SETUP_PY_IN ${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in)
-set(SETUP_PY_OUT ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
-configure_file(${SETUP_PY_IN} ${SETUP_PY_OUT})
-
-# Install target to call setup.py
-add_custom_target(install-python
-        DEPENDS slvs
-        COMMAND python ${SETUP_PY_OUT} install)
+if (NOT ENABLE_GUI)
+    message(STATUS "python package")
+    install(TARGETS _slvs LIBRARY DESTINATION py_slvs)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/slvs.py DESTINATION py_slvs)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py DESTINATION py_slvs)
+endif( NOT ENABLE_GUI)

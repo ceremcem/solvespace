@@ -30,8 +30,13 @@ set(solvespace_VERSION_MINOR 3)
 string(SUBSTRING "${GIT_COMMIT_HASH}" 0 8 solvespace_GIT_HASH)
 
 
-set(ENABLE_GUI OFF CACHE BOOL
-    "Whether the graphical interface is enabled (command line interface always is)")
+if(BUILD_PYTHON)
+    set(ENABLE_GUI OFF CACHE BOOL
+        "Whether the graphical interface is enabled (command line interface always is)")
+else (BUILD_PYTHON)
+    set(ENABLE_GUI ON CACHE BOOL
+        "Whether the graphical interface is enabled (command line interface always is)")
+endif (BUILD_PYTHON)
 
 if (ENABLE_GUI)
     if(NOT WIN32 AND NOT APPLE)
@@ -195,10 +200,11 @@ else() # Linux and compatible systems
     endif()
 endif()
 
-endif()
+add_subdirectory(tools)
+add_subdirectory(exposed)
+
+endif(ENABLE_GUI)
 
 # components
 
-add_subdirectory(tools)
 add_subdirectory(src)
-add_subdirectory(exposed)
