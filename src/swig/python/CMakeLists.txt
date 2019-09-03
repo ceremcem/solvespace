@@ -24,9 +24,6 @@ endif()
 
 add_definitions(-DSLVS_STATIC_LIB)
 
-set(PYTHON_PACKAGE "slvs")
-set(LIBNAME _${PYTHON_PACKAGE}${PYLIB_SUFFIX})
-
 set_source_files_properties(../slvs.i PROPERTIES CPLUSPLUS ON)
 include_directories(../ ../../../include/)
 
@@ -36,7 +33,12 @@ if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
 else()
     swig_add_library(slvs LANGUAGE python SOURCES ../slvs.i)
 endif()
-swig_link_libraries(slvs slvs_static_excp ${PYTHON_LIBRARIES})
+
+if (APPLE)
+    swig_link_libraries(slvs "-Wl,-undefined,dynamic_lookup" slvs_static_excp)
+else (APPLE)
+    swig_link_libraries(slvs slvs_static_excp)
+endif (APPLE)
 
 if (NOT ENABLE_GUI)
     message(STATUS "python package")
