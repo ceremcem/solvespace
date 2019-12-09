@@ -1,8 +1,10 @@
 # Include python
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL Windows)
+    find_package(PythonInterp ${PYTHON_VERSION_MAJOR} REQUIRED)
     find_package(PythonLibs ${PYTHON_VERSION_MAJOR} REQUIRED)
     message(STATUS "python version ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
+    message(STATUS "python libraries ${PYTHON_LIBRARIES}")
 else()
     find_package(PythonInterp ${PYTHON_VERSION_MAJOR} REQUIRED)
     set(Python_ADDITIONAL_VERSIONS ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR})
@@ -36,9 +38,11 @@ endif()
 
 if (APPLE)
     swig_link_libraries(slvs "-Wl,-undefined,dynamic_lookup" slvs_static_excp)
-else (APPLE)
+elseif(WIN32)
+    swig_link_libraries(slvs ${PYTHON_LIBRARIES} slvs_static_excp)
+else ()
     swig_link_libraries(slvs slvs_static_excp)
-endif (APPLE)
+endif ()
 
 if (NOT ENABLE_GUI)
     message(STATUS "python package")
