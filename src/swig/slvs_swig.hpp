@@ -1,6 +1,7 @@
 #ifndef _SLVS_SWIG_
 #define _SLVS_SWIG_
 
+#include <stdexcept>
 #include <stdio.h>
 #include <string.h>
 #include <vector>
@@ -83,7 +84,6 @@ public:
 
 #define SLVS_ACCESSOR(_name) \
     const Slvs_##_name &get##_name(Slvs_h##_name h) const \
-        throw(std::invalid_argument)\
     {\
         auto it = _name##Map.find(h);\
         if(it==_name##Map.end())\
@@ -91,7 +91,6 @@ public:
         return it->second;\
     }\
     void remove##_name(Slvs_h##_name h) \
-        throw(std::invalid_argument)\
     {\
         auto it = _name##Map.find(h);\
         if(it==_name##Map.end())\
@@ -99,7 +98,6 @@ public:
         _name##Map.erase(it);\
     }\
     Slvs_h##_name add##_name(const Slvs_##_name &v, bool overwrite=false) \
-        throw(std::invalid_argument)\
     {\
         if(!v.h)\
             throw std::invalid_argument("invalid " #_name " handle");\
@@ -120,7 +118,6 @@ public:
     SLVS_ACCESSOR(Entity)
 
     Slvs_hParam getEntityParam(Slvs_hEntity h, int idx) const
-    throw(std::invalid_argument) 
     {
 #define SLVS_GET_ENTITY(_name,_idx) \
         if(idx<0 || idx>=_idx)\
@@ -134,21 +131,18 @@ public:
     }
 
     void setEntityParam(Slvs_hEntity h, int idx, Slvs_hParam hParam)
-    throw(std::invalid_argument) 
     {
         SLVS_GET_ENTITY(param,7);
         it->second.param[idx] = hParam;
     }
 
     Slvs_hParam getEntityPoint(Slvs_hEntity h, int idx) const
-    throw(std::invalid_argument) 
     {
         SLVS_GET_ENTITY(point,4);
         return it->second.point[idx];
     }
 
     void setEntityPoint(Slvs_hEntity h, int idx, Slvs_hEntity hEntity)
-    throw(std::invalid_argument) 
     {
         SLVS_GET_ENTITY(point,4);
         it->second.point[idx] = hEntity;

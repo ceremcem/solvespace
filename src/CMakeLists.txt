@@ -85,7 +85,7 @@ target_include_directories(slvs_static
 
 set_target_properties(slvs_static PROPERTIES
     PUBLIC_HEADER ${CMAKE_SOURCE_DIR}/include/slvs.h
-    OUTPUT_NAME slvs)
+    OUTPUT_NAME slvs_static)
 
 add_library(slvs_static_excp STATIC
     ${libslvs_SOURCES}
