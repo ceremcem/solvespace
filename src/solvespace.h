@@ -399,7 +399,7 @@ RgbaColor CnfThawColor(RgbaColor v, const std::string &name);
 
 class System {
 public:
-    enum { MAX_UNKNOWNS = 1024 };
+    enum { MAX_UNKNOWNS = 2048 };
 
     EntityList                      entity;
     ParamList                       param;
