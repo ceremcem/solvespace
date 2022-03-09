@@ -96,6 +96,8 @@ add_library(slvs_static_excp STATIC
 target_compile_definitions(slvs_static_excp
     PRIVATE -DLIBRARY -DSLVS_OOPS_EXCEPTION)
 
+target_compile_options(slvs_static_excp INTERFACE /EHsc-)
+
 target_include_directories(slvs_static_excp
     PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
