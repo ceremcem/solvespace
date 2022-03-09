@@ -26,7 +26,7 @@
 #include <set>
 #include <sstream>
 #ifdef WIN32
-#   include <windows.h> // required by GL headers
+#  include <windows.h> // required by GL headers
 #endif
 #ifdef __APPLE__
 #   include <strings.h> // for strcasecmp in file.cpp
@@ -302,9 +302,14 @@ typedef IdList<Entity,hEntity> EntityList;
 typedef IdList<Param,hParam> ParamList;
 
 #include "sketch.h"
-#include "ui.h"
 #include "expr.h"
 
+#define arraylen(x) (sizeof((x))/sizeof((x)[0]))
+#define PI (3.1415926535897931)
+
+#ifndef LIBRARY
+
+#include "ui.h"
 
 // Utility functions that are provided in the platform-independent code.
 class utf8_iterator : std::iterator<std::forward_iterator_tag, char32_t> {
@@ -326,7 +331,6 @@ public:
     utf8_iterator end()   const { return utf8_iterator(&str[str.length()]); }
 };
 
-#ifndef LIBRARY
 void ssglLineWidth(GLfloat width);
 void ssglVertex3v(Vector u);
 void ssglAxisAlignedQuad(double l, double r, double t, double b, bool lone = true);
@@ -371,17 +375,12 @@ void ssglBitmapText(const std::string &str, Vector p);
 void ssglBitmapCharQuad(char32_t chr, double x, double y);
 int ssglBitmapCharWidth(char32_t chr);
 
-#endif // LIBRARY
-
 #define TEXTURE_BACKGROUND_IMG  10
 #define TEXTURE_DRAW_PIXELS     20
 #define TEXTURE_COLOR_PICKER_2D 30
 #define TEXTURE_COLOR_PICKER_1D 40
 #define TEXTURE_BITMAP_FONT     50
 
-
-#define arraylen(x) (sizeof((x))/sizeof((x)[0]))
-#define PI (3.1415926535897931)
 void MakeMatrix(double *mat, double a11, double a12, double a13, double a14,
                              double a21, double a22, double a23, double a24,
                              double a31, double a32, double a33, double a34,
@@ -396,6 +395,8 @@ void CnfFreezeBool(bool v, const std::string &name);
 void CnfFreezeColor(RgbaColor v, const std::string &name);
 bool CnfThawBool(bool v, const std::string &name);
 RgbaColor CnfThawColor(RgbaColor v, const std::string &name);
+
+#endif // LIBRARY
 
 class System {
 public:
@@ -477,6 +478,9 @@ public:
 
     void Clear(void);
 };
+
+
+#ifdef LIBRARY
 
 #include "ttf.h"
 
@@ -649,6 +653,8 @@ public:
     bool HasCanvasSize(void) { return false; }
 };
 
+#endif // LIBRARY
+
 #ifdef LIBRARY
 #   define ENTITY EntityBase
 #   define CONSTRAINT ConstraintBase
@@ -684,6 +690,8 @@ public:
 };
 #undef ENTITY
 #undef CONSTRAINT
+
+#ifndef LIBRARY
 
 class SolveSpaceUI {
 public:
@@ -972,6 +980,9 @@ void ImportDxf(const std::string &file);
 void ImportDwg(const std::string &file);
 
 extern SolveSpaceUI SS;
+
+#endif
+
 extern Sketch SK;
 
 };

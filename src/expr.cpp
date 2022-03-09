@@ -833,7 +833,9 @@ Expr *Expr::From(const char *in, bool popUpError) {
     } catch (const char *e) {
         dbp("exception: parse/lex error: %s", e);
         if(popUpError) {
+#ifndef LIBRARY
             Error("Not a valid number or expression: '%s'", in);
+#endif
         }
         return NULL;
     }

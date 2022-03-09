@@ -25,6 +25,8 @@ std::string SolveSpace::ssprintf(const char *fmt, ...)
     return result;
 }
 
+#ifndef LIBRARY
+
 char32_t utf8_iterator::operator*()
 {
     const uint8_t *it = (const uint8_t*) this->p;
@@ -197,6 +199,8 @@ bool SolveSpace::CnfThawBool(bool v, const std::string &name)
 
 RgbaColor SolveSpace::CnfThawColor(RgbaColor v, const std::string &name)
     { return RgbaColor::FromPackedInt(CnfThawInt(v.ToPackedInt(), name)); }
+
+#endif
 
 //-----------------------------------------------------------------------------
 // Solve a mostly banded matrix. In a given row, there are LEFT_OF_DIAG
